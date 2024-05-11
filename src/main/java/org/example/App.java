@@ -32,6 +32,10 @@ public class App {
                         System.out.println(viewProducts());
                         break;
                     }
+                    case 2: {
+                        addProduct(scanner);
+                        break;
+                    }
                     default:
                         System.out.println("Nu exista optiunea. Va rugam reincercati.");
                         break;
@@ -40,28 +44,31 @@ public class App {
 
     }
 
-    private static void addProduct() {
+    private static void addProduct(Scanner scanner) {
         SessionFactory sessionFactory = SessionFactoryProvider.provideSessionFactory();
         Session session = sessionFactory.openSession();
         Transaction t = session.beginTransaction();
 
         Product p = new Product();
-        p.setName("Mere");
-        p.setPrice(12.5f);
-        p.setStock(50);
-        session.merge(p);
+        System.out.print("Name : ");
+        p.setName(scanner.next());
+        System.out.print("Price : ");
+        p.setPrice(scanner.nextFloat());
+        System.out.print("Stock : ");
+        p.setStock(scanner.nextInt());
+        //session.merge(p);
         session.persist(p);
         t.commit();
 
         sessionFactory.close();
     }
 
-   private static List<Product> viewProducts(){
-       SessionFactory sessionFactory = SessionFactoryProvider.provideSessionFactory();
-       Session session = sessionFactory.openSession();
+    private static List<Product> viewProducts() {
+        SessionFactory sessionFactory = SessionFactoryProvider.provideSessionFactory();
+        Session session = sessionFactory.openSession();
 //       Query<Product> query = session.createNativeQuery("SELECT * FROM product",Product.class);
-       Query<Product> query = session.createQuery("SELECT p FROM Product p",Product.class);
-       return query.getResultList();
-   }
+        Query<Product> query = session.createQuery("SELECT p FROM Product p", Product.class);
+        return query.getResultList();
+    }
 
 }
