@@ -2,6 +2,7 @@ package org.example;
 
 import org.example.model.Product;
 import org.example.provider.SessionFactoryProvider;
+import org.example.utils.Utils;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -29,11 +30,19 @@ public class App {
             else
                 switch (number) {
                     case 1: {
-                        System.out.println(viewProducts());
+                        Utils.printProducts(viewProducts());
                         break;
                     }
                     case 2: {
                         addProduct(scanner);
+                        break;
+                    }
+                    case 3: {
+                        deletePoduct(scanner);
+                        break;
+                    }
+                    case 4: {
+                        editProduct(scanner);
                         break;
                     }
                     default:
@@ -71,4 +80,36 @@ public class App {
         return query.getResultList();
     }
 
+    private static void deletePoduct(Scanner scanner){
+        Product product = Utils.printProductsWithIndexes(viewProducts(),scanner);
+
+        SessionFactory sessionFactory = SessionFactoryProvider.provideSessionFactory();
+        Session session = sessionFactory.openSession();
+
+        Transaction t = session.beginTransaction();
+
+        session.remove(product);
+        t.commit();
+
+    }
+    private static void editProduct(Scanner scanner){
+        Product product = Utils.printProductsWithIndexes(viewProducts(),scanner);
+
+        SessionFactory sessionFactory = SessionFactoryProvider.provideSessionFactory();
+        Session session = sessionFactory.openSession();
+
+        Transaction t = session.beginTransaction();
+
+
+        System.out.print("Name : ");
+        product.setName(scanner.next());
+        System.out.print("Price : ");
+        product.setPrice(scanner.nextFloat());
+        System.out.print("Stock : ");
+        product.setStock(scanner.nextInt());
+        session.merge(product);
+//        session.persist(product);
+        t.commit();
+
+    }
 }
